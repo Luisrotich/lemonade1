@@ -232,6 +232,7 @@ buyNowFromDetail() {
         }
     }
 
+// In renderProducts() method, ensure this part:
 renderProducts() {
     const productsContainer = document.querySelector('.products');
     if (!productsContainer) return;
@@ -240,9 +241,7 @@ renderProducts() {
         .filter(product => product.status === 'active')
         .map(product => `
         <div class="product-card" data-category="${product.category}" data-name="${product.name.toLowerCase()}" data-tags="${product.tags}">
-            <img src="${product.image}" alt="${product.name}" 
-                 onclick="lemonadeApp.showProductDetail(${JSON.stringify(product).replace(/"/g, '&quot;')})"
-                 style="cursor: pointer;"
+            <img src="${this.getFullImageUrl(product.image)}" alt="${product.name}" 
                  onerror="this.src='https://via.placeholder.com/300x200/fff9c4/ff6f00?text=🍋+Product'">
             <h3>${product.name}</h3>
             <p>${product.description}</p>
@@ -267,6 +266,19 @@ renderProducts() {
     this.setupProductInteractions();
 }
 
+// Add this helper method to handle image URLs
+getFullImageUrl(imagePath) {
+    if (!imagePath) {
+        return 'https://via.placeholder.com/300x200/fff9c4/ff6f00?text=🍋+Product';
+    }
+    
+    if (imagePath.startsWith('http') || imagePath.startsWith('data:')) {
+        return imagePath;
+    }
+    
+    // For relative paths, prepend the base URL
+    return `${this.baseURL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
+}
     setupProductInteractions() {
         // Quantity buttons
         document.addEventListener('click', (e) => {
